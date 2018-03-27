@@ -65,8 +65,10 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -91,7 +93,7 @@ public class Camera2BasicFragment extends Fragment
     /**
      * Tag for the {@link Log}.
      */
-    private static final String TAG = "Camera2BasicFragment";
+    private static final String TAG = "LOG";
 
     /**
      * Camera state: Showing camera preview.
@@ -137,11 +139,13 @@ public class Camera2BasicFragment extends Fragment
 
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture texture, int width, int height) {
+            Log.d(TAG, "entro a onSurfaceTextureAvailable(), before openCamera(w,h)");
             openCamera(width, height);
         }
 
         @Override
         public void onSurfaceTextureSizeChanged(SurfaceTexture texture, int width, int height) {
+            Log.d(TAG, "entro a onSurfaceTextureSizeChanged(), before configureTransform(w,h)");
             configureTransform(width, height);
         }
 
@@ -434,7 +438,9 @@ public class Camera2BasicFragment extends Fragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFile = new File(getActivity().getExternalFilesDir(null), "pic.jpg");
+
+        long rightNow = Calendar.getInstance().getTime().getTime();
+        mFile = new File(getActivity().getExternalFilesDir(null), "pic" + rightNow + ".jpg");
     }
 
     @Override
@@ -899,6 +905,12 @@ public class Camera2BasicFragment extends Fragment
                             .setPositiveButton(android.R.string.ok, null)
                             .show();
                 }
+                break;
+            }
+            case R.id.change2cam : {
+                getActivity().getFragmentManager().beginTransaction()
+                        .replace(R.id.container, Camera2VideoFragment.newInstance())
+                        .commit();
                 break;
             }
         }
